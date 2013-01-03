@@ -1,0 +1,28 @@
+\begin{thebibliography}{JFW11}
+
+\bibitem[Ali10]{1}
+Maher Ali.
+\newblock {\em Advanced iOS 4 Programming}.
+\newblock Wiley, 2010.
+
+\bibitem[App11]{2}
+Apple.
+\newblock ios dev center.
+\newblock http://developer.apple.com/devcenter/ios/index.action, 5 2011.
+
+\bibitem[Buc09]{3}
+James Bucanek.
+\newblock {\em Lean Objective-C for Java Developers}.
+\newblock Apress, 2009.
+
+\bibitem[JFW11]{4}
+Damien~Vionnet Jean-Frédéric~Wagen, Stéphane~Pierroz.
+\newblock {\em Advanced Mobile Solutions}.
+\newblock Ecole d'ingénieurs et d'architecte de Fribourg, 2011.
+
+\bibitem[Ste10]{5}
+Scott Stevenson.
+\newblock {\em Cocoa and Objective C : up and Running}, volume~1.
+\newblock O'Reillly, 2010.
+
+\end{thebibliography}

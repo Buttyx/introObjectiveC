@@ -1,0 +1,531 @@
+\documentclass{report}
+
+\usepackage[T1]{fontenc}
+\usepackage[english,frenchb]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{geometry} 
+\usepackage{longtable} 
+\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\usepackage{verbatim}
+\usepackage{color,fancyvrb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage[table]{xcolor}
+\usepackage{biblist}
+\usepackage{supertabular}
+\usepackage{footbib}
+
+%\addtolength{\hoffset}{-1cm}
+%\addtolength{\textwidth}{2cm}
+%\addtolength{\voffset}{-1cm}
+\addtolength{\textheight}{2cm}
+
+\makeatletter
+\renewcommand{\maketitle}{
+	\begin{titlepage}
+    %\includegraphics[width=15cm]{eiafr.eps}
+    \includegraphics[width=15cm]{eiafr.jpg}
+    \null
+    \vskip 75\p@
+    \begin{center}
+      	\hrule
+      	\vskip 5pt
+      	\begin{flushright}
+   			{\Huge {\bf \@title}} \\
+   			\vskip 5pt
+   			\hrule
+   			\vskip 5pt
+   			{\textit{\huge \@subtitle}} \\
+   			{\huge Projet de semestre}\\
+   			{\large Filière informatique} 
+    	\end{flushright}
+      	\vskip 5pt
+      	\hrule
+    \end{center}
+    \vskip 50\p@
+    \begin{flushright}
+   		{\large \bf \@version} \\
+   		{\large Superviseur : Jacques Bapst} \\
+   		{\large Auteur : Xavier Butty} \\
+   		{\large  \@date}
+    \end{flushright}
+    \vfil
+    %\includegraphics[width=7cm]{softcom.eps}
+    \null
+  \end{titlepage}
+}
+
+\def\subtitle#1{\def\@subtitle{#1}}
+\def\version#1{\def\@version{#1}}
+\makeatother
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+% Ceci permet d’avoir les noms de chapitre et de section
+% en minuscules
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\fancyhf{} % supprime les en-têtes et pieds prédéfinis
+\fancyhead[L]{\bfseries Introduction Objective C}% Left Even, Right Odd
+\fancyhead[R]{\bfseries \leftmark}% Left Even, Right Odd
+\fancyfoot[L]{Xavier Butty}
+\fancyfoot[R]{Printemps 2011}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}% filet en haut de page
+\addtolength{\headheight}{2pt} % espace pour le filet
+\renewcommand{\footrulewidth}{0.4pt} % pas de filet en bas
+\fancypagestyle{plain}{} 
+
+\title{Introduction à l'Objective C}
+\subtitle{ainsi qu'à son environement de dévelopement}
+\author{Xavier Butty}
+\date{Printemps 2011}
+\version{v1.0}
+
+\definecolor{darkgreen}{rgb}{0.23,0.59,0.33}
+
+
+\RecustomVerbatimEnvironment
+{Verbatim}{Verbatim}
+{frame=single,framesep= 10pt, numbers=left, rulecolor=\color{blue},formatcom=\color{darkgreen}}
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\chapter{Introduction à l'Objective C}
+
+\section{But du document}
+Ce document a été réalisé dans le cadre de mon projet de semestre au printemps 2011. Il a pour but de faire une brève introduction de l'objective C pour des développeurs habitué à travailler avec Java ou encore C. Seules les concepts de base de ce langage sont présentés au travers d'exemples et de comparaisons avec d'autres langages.
+
+\section{Objective C, iOs et Cocoa Touch}
+Cette première partie d'analyse concerne les technologies utilisées pour le développement sur la tablette tactile d'\textit{Apple} tels que l'Objective C et l'API Cocoa.
+\subsection{Introduction}
+Le début des années septante a vu naître un langage de programmation qui devint rapidement populaire: le C. Ce langage, faisant toujours partie des plus utilisés, servit à d'autres innovations informatiques majeures de cette décennie. Le système UNIX écrit entièrement en C en est un exemple.
+ 
+Cependant, l'arrivée de la programmation orientée objet révéla une des principales limites de C. En effet, ce langage procédural se prêtait parfaitement à la programmation structurée majoritairement utilisé dans les années 70-80. Mais dès la fin des années septante, pour palier à cette limitation, des extensions de C offrant la programmation orientée objet furent développés. Bjarne Stroustrup développa par exemple le C++ en 1979. C'est quelques années plus tard, au début des années 80, que Brad Cox et Tom Love créent l'Objective C. Les deux développeurs de la société Stepstone se basèrent sur Smalltalk-80, un langage orientée objet du début des années septante, pour ajouter leur propre couche orientée objet au C. 
+
+Comme pour Java et surtout Smalltalk-80 dont il s'inspire, le code compilé d'Objective C s'exécute au sein d'un runtime léger lui-même écrit en C. Le langage de Cox et Love est donc bien une couche du C. Ce runtime a un rôle important; En effet, comme pour java, ce moteur d'exécution se charge de la création des classes et objets, de l'évaluation des types de variables, etc. Elle distribue aussi les différents messages entres les objets. Ce dernier point est expliqué plus en détails ci-dessous, dans le sous-chapitre du même nom. 
+
+En 1988, NeXT, jeune société fondée par Steve Jobs, achète la licence d'Objective C à StepStone et crée son propre compilateur et bibliothèque Objective C. Grâce à cela, NeXT développa son propre système d'exploitation: NeXTSTEP. Même si ce système ne fut pas un succès, il disposait de nombreux avantages comme son API performante et orienté objet (OpenStep, l'ancêtre de Cocoa), son environnement de développement et sa base UNIX. D'ailleurs de nombreux projets célèbres ont été développés sur ce système: Les jeux Doom et Wolfenstein ou plus sérieusement le Web par Tim Berners-Lee au CERN. En rachetant NeXT en 1996, Apple acquère NeXTSTEP qui va leur servir pour le développement de leur prochain système: Mac OS X. En effet, l'environnement de développement fut repris et deviendra plus tard Xcode alors que Cocoa se basa sur l'API de NeXT.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=40mm]{images/next.jpg}
+	\caption{Logo de Next}
+\end{figure}
+Les différentes particularités d'Objective C ainsi que son organisation de base sont présentées dans la suite de cette section. A noter que de bonnes bases de C sont très utiles pour la compréhension de ce langage; Que ce soit au niveau des types ou encore la notion de pointeur. 
+
+La version d'Objective C utilisée sur iOS 4 est l'Objective C 2.0 sorti en 2006. Cependant, il ne dispose pas sur ce système de toutes les améliorations apportées. Par exemple, le \textit{garbage collector} n'est pas implémenté.
+
+\subsection{Dynamisme}
+Une des forces de l'Objective C est son dynamisme. Le langage de Cox et Love est défini comme fortement dynamique. Cela vient en grande partie du fait que, comme expliqué dans l'introduction, son runtime s'occupe de nombreuses tâches, et cela à l'exécution. 
+
+Parlons du typage, par exemple: Celui d'Objective C est définit comme dynamique et faible. En effet, l'évaluation des types de variables est faite à l'exécution et peut être changé en cours de route. Objective C permet aussi de typer explicitement une variable. Dans ce cas là, le compilateur va nous avertir en cas de mauvaise utilisation de notre objet. Cependant, cela ne sera qu'un avertissement et non une erreur. Pour mieux illustrer ces différents typages possibles, observons l'exemple ci-dessous:
+\begin{Verbatim}
+id monNom = [MaClasse maMethode];
+\end{Verbatim}
+Ici, le type id déclare que la variable monNom peut se référer à n'importe quelle sorte d'objet. La partie de droite ('appel de méthode') sera expliqué plus loin dans cette section. 
+
+\begin{Verbatim}
+id<monProtocol> monNom = [MaClasse maMethode];
+\end{Verbatim}
+La différence pour la ligne ci-dessus est que la variable doit se référer à une instance de classe conforme au protocole ``mon protocole'' (décrit plus loin dans cette section).
+
+\begin{Verbatim}
+NSString* monNom = [MaClasse maMethode];
+\end{Verbatim}
+Notre variable doit ici pointer sur une instance de NSString. On peut remarquer ici l'ajout de l'astérisque. En effet, chaque variable d'objets Objective C est de type pointeur. Cependant, le type id est prédéfini comme pointeur. Ce type ne nécessite pas d'astérisque. 
+
+Les autres points qui font de l'Objective C un langage dynamique fort ne seront pas détaillés. Il est à noté que la réflexion est un point fort de l'Objective C, que ce soit par l'intercession (avec le typage par exemple) ou l'introspection. 
+
+\subsection{Création d'une classe}
+Comme pour C++, une classe Objective C se compose de deux fichiers: un .h pour la déclaration des méthodes, variables et un .m pour l'implémentation. Ces deux différentes parties sont décrites ci-dessous, prenant pour exemple la création d'une classe ``MaClasse''. En général pour Objective C, on utilise la notation CamelCase pour les noms de variables, méthodes ou classes avec la première lettre en majuscule pour ces dernières. 
+
+\subsubsection{Déclaration}
+Pour cette partie, il faut débuter par importer les fichiers d'en-têtes des classes et bibliothèques dont nous avons besoin. Dans le cas de notre projet, il y a beaucoup de chance que l'on doive souvent importer \textit{Cocoa.h}. A noter qu'au contraire de C et ses \textit{\#include}, l'\textit{\#import} d'Objective C contrôle et évite d'inclure plusieurs fois les mêmes fichiers. 
+
+Par la suite, le mot clé \textit{@interface} permet de déclarer le nom de notre classe, ici ``MaClasse'', et de débuter nos déclarations. A droite du nom, après un point virgule, on peut ajouter le nom de classe parent. Après cela, les différentes variables d'instances de notre classe peuvent être ajoutées entre accolades. 
+
+\begin{Verbatim}
+#import <Cocoa/Cocoa.h>
+
+@interface MaClasse: NSObject {
+	id variable1;
+	id variable2;
+}
+
++ (TypeDeRetour*) methodeDeClasse: (TypeDuParametre*)parametre;
+- (void) methodeDunObjet;
+
+@end
+\end{Verbatim}
+
+Les déclarations de méthodes sont à ajouter après les accolades. Un + signifie que la méthode est une méthode de classe, alors que le - est pour les méthodes d'instances. Dans l'exemple ci-dessus, notre méthode d'instance ne prend aucun paramètre et ne retourne rien. 
+
+Finalement, la déclaration de notre classe se termine par le mot clé \textit{@end}.
+
+\subsubsection{Implémentation}
+Notre fichier d'implémentation doit débuter par l'importation de notre fichier d'en-tête via \textit{\#import}.
+
+Le mot clé utilisé pour débuter notre partie d'implémentation est ici \textit{@implementation}. Il est suivit du nom de la classe comme pour la partie de déclaration. Par contre, pas besoin de s'occuper des variables, donc pas d'accolades.
+
+\begin{Verbatim}
+#import ``MaClasse.h''
+
+@implementation MaClasse
+
++ (TypeDeRetour*) methodeDeClasse: (TypeDuParametre*)parametre{
+	[variable1 autorelease];
+	variable1 = [parametre retain];
+	return variable2;
+}
+
+- (void) methodeDunObjet{
+	variable2++;
+}
+
+- (id) init{
+	if(self = [super int]){
+		[self methodDunObjet];
+	}
+	return self;
+}
+
+@end
+\end{Verbatim}
+
+Le corps de nos méthodes peut être implémenté au-dessous du nom de notre classe. Une classe possède normalement une méthode \textit{init} pour définir les valeurs de bases de nos variables ou faire d'autres tâches de configurations. Par défaut, les variables sont définie comme \textit{nil}. A noter que pour ce langage, la référence d'un objet à lui même est \textit{self}, et non \textit{this} comme en Java.
+Le contenu des méthodes ci-dessous n'est pas à regarder en détail pour le moment. L'utilisation de \textit{autorelease} et \textit{retain} sera expliqué dans la sous-section \textit{Gestion de la mémoire}.
+
+
+\subsection{Messages}
+
+Contrairement à C,C++ ou encore Java, Objective C ne fait pas d'appel de méthode. Il envoie des messages à des objets. C'est un des points qui fait que ce langage est fortement dynamique. En effet, l'envoi de message n'est pas un ``ordre'' comme l'appel de méthode, mais plutôt une requête. 
+
+Prenons, par exemple, notre classe implémentée ci-dessus. Avec du java, pour appeler les méthodes de notre classe, on ferait:
+\begin{Verbatim}
+variable = MaClasse.methodeDeClasse(parametre);
+instanceDeMaClasse.methodeDunObjet();
+\end{Verbatim}
+
+Avec Objective C, les envois de messages se feront comme ci-dessous:
+\begin{Verbatim}
+variable = [MaClasse methodeDeClasse:parametre];
+[instanceDeMaClasse methodeDunObjet];
+\end{Verbatim}
+
+\subsubsection{Messages avec plusieurs paramètres}
+L'utilisation de messages avec plusieurs paramètres nécessite l'ajout de label à nos paramètres. Prenons par exemple la méthode suivante:
+\begin{Verbatim}
+- (void) setVariables:(Type1*)var1 variable2:(Type2*)var2;
+\end{Verbatim}
+
+Pour cette méthode, nos labels sont ici \textit{setVariables} pour \textit{var1} et \textit{variable2} pour \textit{var2}. Le premier paramètre aura toujours le nom de la méthode comme label. Les labels sont important pour définir le nom de notre méthode, si l'on souhaite utiliser des \textit{selectors} (traités plus loin dans cette section). 
+
+\subsubsection{Messages imbriqués}
+Pour l'envoi de messages imbriqués, le code ressemble à cela:
+\begin{Verbatim}
+variable = [MaClasse methodeDeClasse:[objet methode]];
+\end{Verbatim}
+
+
+\subsubsection{Accesseurs}
+Par défaut, toutes les variables des objets sont protégées. Pour offrir l'accès à ces variables, il faut créer un \textit{setter} et \textit{getter} pour chaque variable qui sont nos \textit{accesseurs}. Il est définit qu'en Objective C, pour plus de clarté, le nom du \textit{getter} sera simplement le nom de la variable (sans \textit{get}) alors que le setter prendra comme préfixe \textit{set}. Voici un exemple avec une variable ``name''.
+
+\begin{Verbatim}
+- (Type*) name;
+- (void) setname: (Type*)name;
+\end{Verbatim}
+
+Ces \textit{accesseurs} peuvent être générés automatiquement via les \textit{properties} qui sont aussi abordées plus tard dans cette section. 
+
+\subsection{Properties}
+En créant des accesseurs, le code pour les \textit{getter} et \textit{setter} est en quelque sorte toujours répété. Pour éviter cela, Objective C possède une fonctionnalité permettant de les définir et de les créer automatiquement: Les \textit{properties}. 
+
+Pour ajouter cette fonctionnalité, il faut modifier la partie implémentation et déclaration. Le mot clé \textit{@property} est à ajouter avant chaque nom de variable auxquelles nous souhaitons ajouter un \textit{getter} / \textit{setter}. Voici un exemple pour la variable \textit{name}.
+
+\begin{Verbatim}
+#import <Cocoa/Cocoa.h>
+
+@interface MaClasse: NSObject {
+	id name;
+}
+
+@property (options) name;
+
+@end
+\end{Verbatim}
+
+Entre parenthèses, après \textit{@property}, on peut définir divers paramètres: Donner un autre nom que le nom de notre variable comme \textit{getter} ou encore définir si il renvoie une copie de l'objet ou une simple référence.
+
+Notre fichier MaClasse.m a alors la forme suivante;
+
+\begin{Verbatim}
+#import ``MaClasse.h''
+
+@implementation MaClasse
+
+@synthesize name;
+
+@end
+\end{Verbatim}
+
+Le mot clé \textit{@synthesize} permet de générer automatiquement les accesseurs. 
+Les propriétés peuvent nous faire gagner beaucoup de temps et rendre notre code plus simple et plus clair. 
+
+\subsubsection{Selectors}
+Objective C offre une autre possibilité intéressante au sujet des méthodes, enfin des ``messages''. On peut enregistré leurs noms  en tant que variables et de ce fait les passer entre différents objets. Ces variables sont alors de type \textit{SEL}. 
+
+Il existe deux façons différentes de créer ces \textit{selectors}. Soit grâce à la fonction \textit{NSSelectorFromString(NSStringDeLaMethode)} ou via \textit{@selector(nomDeLaMethode)}. Dans la sous-section concernant les messages, il est mentionné que les labels sont importants pour le nom des méthodes. Prenons pour exemple la méthode \textit{setVariables} ci-dessous:
+
+\begin{Verbatim}
+- (void) setVariables:(Type1*)var1 variable2:(Type2*)var2;
+\end{Verbatim}
+
+Son nom de méthode est alors:
+\begin{Verbatim}
+ setVariables:variable2
+\end{Verbatim}
+
+Et voici les deux manières pour obtenir son sélecteur:
+
+Son nom de méthode est alors:
+\begin{Verbatim}
+ SEL selecteur = @selector(setVariables:variable2);
+ 
+ ou
+ 
+ NSString* nomDeMethod =  @''setVariables:variable2''
+\end{Verbatim}
+
+Le nom de la méthode ne prend deux points à la fin que si elle a un ou des paramètres.
+
+Pour retrouver le nom d'une méthode d'après un sélecteur, il suffit d'utiliser la fonction \textit{NSStringFromSelector(nomDuSelecteur)}.
+
+Ces sélecteurs sont très utilisés pour envoyer des messages et surtout pour les transmettre en différents objets. Par exemple, lorsqu'un objet reçoit un message qui ne lui est pas destiné (il ne possède pas la méthode appelée), il peut transférer ce message à un autre objet. Cela offre une grande flexibilité et permet de simplifier la conception de certain composant.
+
+\subsection{Categories}
+Contrairement à C++, Objective C ne permet pas l'héritage multiple. Par contre, le langage de Cox \& Love permet d'ajouter des nouvelles méthodes à des classes existantes. Ces méthodes seront alors ajoutées à chacunes des instances de la classe concernée par la catégorie, ainsi qu'à ses sous-classes. 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=80mm]{images/category.jpg}
+	\caption{Les catégories sont aussi héritées aux enfants de la classes concernée}
+\end{figure}
+
+Une des limitations des catégories par rapport aux sous-classes et le fait qu'aucune variables d'instance ne peut être ajoutée.  
+
+Généralement, on inclut le nom de la classe augmentée par la catégorie au nom des fichiers de celle-ci. Par exemple, pour le diagramme ci-dessus, les fichiers sont \textit{VehiculeEcology.h} et \textit{VehiculeEcology.m}. 
+
+Partie déclaration de notre catégorie:
+\begin{Verbatim}
+#import <Cocoa/Cocoa.h>
+
+@interface Vehicule (Ecology)
+
+- (BOOL)estEcolo;
+
+@end
+\end{Verbatim}
+
+
+Code du fichier \textit{VehiculeEcolo.m}:
+\begin{Verbatim}
+#import ``VehiculeEcolo.h''
+
+@implementation Vehicule (Ecology)
+
+- (BOOL)estEcolo
+{
+	// Actions...
+	
+	return VRAI ou FAUX
+} 
+@end
+\end{Verbatim}
+
+La méthode \textit{estEcolo} est disponible pour chaque instance de \textit{Vehicule} ou une de ses sous-classes.
+
+\subsection{Protocoles}
+Le pendant Objective C des interfaces de Java ou encore des classes abstraites de C++ sont les protocoles. Ils permettent de créer et de déclarer des méthodes requises ou optionnelles à implémenter par les classes se conformant à ces protocoles. Les protocole offrent ainsi, comme pour les interfaces, la possibilité d'utiliser conjointement différents types d'objets n'ayant pas les même parents. Grâce à un protocole et à des interfaces offertes par celui-ci on peut aussi cacher les classes utilisées.
+
+Un bon exemple d'utilisation de protocole pourrait être l'ajout d'une méthode de sauvegarde ou d'impression pour différents types de fichiers. Le programme n'aura pas besoin ne connaître la classe de l'instance à sauver, juste que celle-ci soit conforme au protocole de sauvegarde. 
+
+Un protocole se déclare dans fichier \textit{.h} comme ci-dessous:
+
+\begin{Verbatim}
+@protocol MonProtocol<ProtocolParent>
+
+@required
+-(void)methodeRequise
+
+@optional
+-(void)methodeOptionnel
+
+@end
+\end{Verbatim}
+
+A noter que si une classe se conformant à un protocole n'implémente pas une méthode requise, Xcode ne générera qu'un avertissement à la compilation et non une erreur.
+
+Si on veut qu'une classe suive un certain protocole, il suffit de déclarer celle-ci de cette façon:
+\begin{Verbatim}
+@interface MaClasse<MonProtocol>
+\end{Verbatim}
+
+\subsection{Délégués}
+La délégation est fortement liée aux protocoles. En effet, un objet se conformant à un protocole peut se voir déléguer certaines tâches par un autre objet. Les délégués peuvent être vus comme des contrôleurs. 
+
+Le pattern \textit{Observer} illustre assez bien ce principe. Dans ce cas, les objets \textit{observateurs} sont des délégués d'un objet \textit{observé}. A chaque actions, celui-ci envoie alors des messages à tous ses délégués, qui implémentent ou non les messages reçus. 
+
+Dans la pratique, la notion de délégué est utilisée pour les différents éléments de l'interface graphique. Un champ texte peut, par exemple, avoir des délégués qui sont avertis à chaque actions, comme à la fin d'édition d'un texte. 
+
+Si l'on souhaite créer un délégué pour ce champ texte, il faut définir que notre classe se conforme au protocole \textit{UITextViewDelegate}. 
+\begin{Verbatim}
+@interface Exemple_Delegue:UIViewController<UITextViewDelegate>
+\end{Verbatim}
+Dans ce cas, la classe \textit{Exemple\_Delegue} hérite de la classe \textit{UIViewController} qui est la classe de base pour tout contrôleur de l'interface graphique.
+
+L'implémentation va dépendre des méthodes du protocole que l'on souhaite implémenter. Ci-dessous, seule la méthode appelée à la fin d'édition de texte est implémentée. 
+\begin{Verbatim}
+@implementation Exemple_Delegue
+
+- (void)textViewDidBeginEditing:(UITextView*)textView
+{
+	// Action
+}
+
+@end
+\end{Verbatim}
+\subsection{Gestion de la mémoire}
+Contrairement à Max OS X, l'iOS n'a pas de \textit{garbage collection} implémenté. Ce qui signifie que la gestion de la mémoire est nécessaire lorsqu'on programme sur iPhone ou iPad. Comme en C++, il faut veiller aux allocations et destructions d'objets. 
+
+Selon Apple\footnote{http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html}, la règle de base pour la gestion de mémoire avec Objective C est qu'on ne relâche (via release ou autorelease) que les objets que l'on possède. On ``possède'' un objet si on a incrémenté son compteur: soit fait \textit{init} ou encore \textit{retain}. Une seconde règle de bonne pratique s'ajoute à celle-ci: On relâche tous les objets qu'on ne va plus utiliser.
+
+Pour simplifier la gestion de la mémoire, Objective C implémente un système de compteur de référence sur chaque objet. A chaque création ou copie, ce compteur est initialisé à 1. Par la suite, on peut incrémenter ce compteur via la fonction \textit{retain} si on ajoute une référence sur cet objet. Pour décrémenter le compteur, il existe la fonction \textit{release}. Lorsque ce compteur tombe à 0, \textit{dealloc} (similaire à \textit{delete} en C++) est automatiquement appelé pour détruire notre objet. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=140mm]{images/memory_management.jpg}
+	\caption{Cycle de vie d'un objet avec son compteur de référence}
+\end{figure}
+
+Pour obtenir la valeur courante du compteur, il suffit d'appeler la fonction \textit{retainCount}.
+
+Observons le cycle de vie d'un objet au travers d'un simple exemple avec une chaîne de caractère:
+\begin{Verbatim}
+// Création de l'objet
+NSString* monObjet = [[NSString alloc] init]; // compteur = 1
+
+// Incrémentation du compteur
+NSString* monObjet = [NSString retain]; // compteur = 2
+
+// Retourne la valeur courante du compteur
+[NSString retain]; // compteur = 2
+
+// Décrémentation du compteur
+NSString* monObjet = [NSString retainCout]; // compteur = 1
+
+// Décrémentation du compteur et destruction
+NSString* monObjet = [NSString retain]; // compteur = 0, objet détruit
+\end{Verbatim}
+
+Objective C offre cependant une manière de détruire nos objets à la manière d'un pseudo garbage-collection: la fonction \textit{autorelease}. Lorsqu'on utilise cette fonction sur un objet, on place notre objet sur l'\textit{autorelease pool} qui est une collection d'objets devant recevoir un message de \textit{release}. Le compteur de ces objets est alors décrémenté une fois à la fin de la partie courante du code ayant envoyé le message d'\textit{autorelease}. Cette partie de code peut être un \textit{thread} ou une \textit{méthode}.
+
+Cette fonction peut être très utile dans le cas où, dans une méthode, on crée un objet dont on va retourner la référence. Avec un message de \textit{release}, on décrémente le compteur de l'objet trop vite, comme on doit le faire avant le \textit{return}. Notre objet est alors détruit. Par contre, avec \textit{autorelease}, on s'assure que le compteur soit décrémenté après que notre méthode ait retourné la référence de l'objet.
+\begin{Verbatim}
+// Méthode avec release (non fonctionnelle)
+- (NSString*)methodeExemple
+{
+	NSString* monObjet = [[NSString alloc] init];
+	[monObjet release];
+	return monObjet; // Objet peut être détruit!
+}
+
+// Méthode avec autorelease (fonctionnelle)
+- (NSString*)methodeExemple
+{
+	NSString* monObjet = [[NSString alloc] init];
+	[monObjet autorelease];
+	return monObjet; 
+}
+\end{Verbatim}
+
+\subsection{Compatibilité avec C, C++}
+Objective C est, comme expliqué dans l'introduction, une surcouche de C. Nous avons alors accès aux différents types C ainsi qu'aux bibliothèques de ce langage. D'ailleurs, Cocoa possède des classes entièrement codées en C. 
+
+Pour C++, cela est plus compliqué. En effet, ce langage reste lui aussi une sur-couche de C. Cependant, C++ possède de nombreuses bibliothèques célèbres comme OpenCV. Pour permettre de les utiliser en Objective C, une nouvelle version du langage chère à Apple a été développée: Objective C++. Mais cela reste une solution de dernier recours car cette version se place comme une couche supplémentaire au-dessus de C++. Cela devient lourd et peut vite amener des problèmes du fait que les interactions entre les classes C++ et Objective C sont impossibles. 
+
+\subsection{iOs}
+L'architecture du système mobile d'Apple, iOs, est proche de celle de Mac OS X. Comme pour le système d'exploitation de bureau, elle a pour base un kernel \textit{Mach}  
+recouvert par 4 différentes couches:
+\begin{itemize}
+\item \textbf{Core OS:} C'est la couche la plus basse. Elle offre des interfaces pour accéder aux systèmes fichiers, au réseau, et tout autre service de bas niveau. La plupart des ces interfaces ont été programmées en C. 
+
+\item \textbf{Core Services:} Comme son nom l'indique, cette couche offre différents services implémentés sur les bases de la couche précédente. Cela concerne les différents services concernant l'accès aux réseaux ou encore l'accès aux fichiers. A noter que le \textit{Fundation framework} dont nous allons parlé dans la sous-section suivante se situe dans cette couche.
+
+\item \textbf{Media:} La gestion des différents éléments multimédia est effectuée au sein de cette couche. Cela concerne l'audio, la vidéo ou encore le graphisme 2D et 3D.
+
+\item \textbf{Cocoa Touch:} La sous-section suivante analyse cette couche en détails. Pour résumé, elle se charge de tout ce qui touche directement l'utilisateur, comme les contrôles (multi-touch, accéléromètre, ...) et les interfaces graphiques.
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=40mm]{images/coucheios.jpg}
+	\caption{Les différentes couches de l'iOS}
+\end{figure}
+
+\subsection{Cocoa}
+Quand on parle de programmation en Objective C, le terme Cocoa revient souvent. Néanmoins, les définitions que l'on trouve à ce sujet sont souvent confuses. Certaines personnes décrivent Cocoa comme un écosystème pour la création d'applications pour Mac OS X, iPhone ou iPad. D'autres résument simplement Cocoa à un grand framework en en-capsulant d'autres. Rien de tout cela n'est faux, bien que cela ne soit qu'une brève description.
+
+\subsubsection{Origine}
+Pour commencer, il faut revenir à l'origine de cet API. Dans l'introduction de ce chapitre, l'API OpenSTEP pour le système d'exploitation NeXTSTEP a été brièvement cité. C'est justement cette API qui fut la base de Cocoa lorsque qu'Apple racheta NeXT. NeXTSTEP étant à la base de Mac OS X, il est logique que son API réputée performante soit aussi reprise.
+\\
+Mais pourquoi cette API alors que NeXTSTEP et par conséquent Mac OS X avaient une base Unix, plus précisément BSD? De plus, comme vu plus tôt, Objective C permet l'utilisation de différents types C. 
+La réponse est simple: NeXT développa Cocoa afin de fournir une interface de programmation entièrement orientée objet. Cette API fournit aussi des types couramment utilisés, comme les chaînes de caractères ou les listes. D'ailleurs, ils gardent la marque de NeXTSTEP. En effet, les deux premières de leur nom sont toujours \textit{NS}, comme \textit{NSString}. Ces différents types sont souvent appelés value classes, ou encore Foundation value classes, du nom d'un sous-framework de Cocoa. 
+
+\subsubsection{Composant de l'API}
+Cocoa ne doit pas être confondue avec la couche \textit{Cocoa touch} de l'iOs. Bien que cette couche ne contienne que des composants de Cocoa, l'API a aussi des composants au sein des autres couches. Voici les deux composants principaux de Cocoa et leurs utilité:
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=90mm]{images/ios_architecture.jpg}
+	\caption{Cocoa au sein de l'architecture de l'iOs.}
+\end{figure}
+\begin{itemize}
+\item \textbf{Foundation}: Framework fournissant les classes pour les types de bases comme les chaînes de caractères, nombres, tableaux,...
+\item \textbf{UIKit (iOs) / AppKit (Mac OS X)}: Tous les éléments liés à l'interface graphique sont contenus dans ce framework.
+\end{itemize}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=90mm]{images/osx_architecture.jpg}
+	\caption{Cocoa au sein de l'architecture de Mac OS X.}
+\end{figure}
+Un autre framework présent sur iOs et Mac OS X fait partie de Cocoa. Il s'agit du \textit{Core Data} qui s'occupe de la persistance des données, que ce soit avec SQLite, XML ou autre.
+
+\subsection{Environnement de développement}
+Apple ayant limité la plateforme de développement à Mac OS X, c'est sur ce système que va être développée notre application. L'environnement de développement est divisé en deux outils: Xcode et Interface Builder. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=140mm]{images/xcode.png}
+	\caption{Interface de Xcode}
+\end{figure}
+Le premier est plus basé création de code (création de projets, classes et implémentation) alors que le deuxième est, comme son nom l'indique, destiné à la création des interfaces graphiques. Les deux outils sont complémentaires et communiquent bien entre eux. Par exemple, Xcode démarre automatiquement Interface Builder une fois que l'on souhaite modifier un fichier .xib et prend en compte directement les changements effectués dans cet outil. Par ailleurs, Apple a fusionné les deux outils pour la version 4 de leur environnement de développement.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=140mm]{images/interfacebuilder.jpg}
+	\caption{Vue d'Interface Builder avec l'émulateur d'iPhone}
+\end{figure}
+L'environnement de développement fournit aussi d'autres outils, comme un émulateur pour iPhone et iPad, une documentation, un outil de test unitaire, ... Apple a créés un IDE plus que complet pour développer sur ses systèmes même si on pourrait lui tenir quelques reproches, notamment au niveau des faibles possibilités offertes pour le refactoring de code.
+\newpage 
+
+\renewcommand{\refname}{\chapter{Références}} 
+\renewcommand*{\refname}{} 
+\chapter{Références}     % ...place a normal section heading before the bibliography entries.
+\bibliographystyle{alpha}
+\bibliography{rapport}
+
+\listoffigures  % table des figures
+\end{document}
